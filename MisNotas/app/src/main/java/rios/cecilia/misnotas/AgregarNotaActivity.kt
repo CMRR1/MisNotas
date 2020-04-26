@@ -13,7 +13,6 @@ import java.io.*
 import java.lang.Exception
 
 class AgregarNotaActivity : AppCompatActivity() {
-    var notas =ArrayList<Nota>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,39 +23,7 @@ class AgregarNotaActivity : AppCompatActivity() {
         }
     }
 
-    fun leerNotas(){
-        notas.clear()
-        var carpeta=File(ubicacion().absolutePath)
 
-        if(carpeta.exists()){
-            var archivos=carpeta.listFiles()
-            if(archivos !=archivos){
-                leerArchivo(archivos)
-            }
-        }
-    }
-
-    fun leerArchivo(archivo:File){
-        val fis= FileInputStream(archivo)
-        val di=DataInputStream(fis)
-        val br=BufferedReader(InputStreamReader(di))
-        var striLine: String? =br.readLine()
-        var myData=""
-
-        //lee los archivos almacenados en la memoria
-        while (striLine != null){
-            myData=myData+striLine
-            striLine=br.readLine()
-        }
-        br.close()
-        di.close()
-        fis.close()
-        //elimina el .txt
-        var nombre=archivo.name.substring(0, archivo.name.length-4)
-        //crea la nota y la agrega a la lista
-        var nota =Nota(nombre, myData)
-        notas.add(nota)
-    }
 
     fun guardar_nota(){
         //verificar que tenga los permisos
@@ -64,7 +31,7 @@ class AgregarNotaActivity : AppCompatActivity() {
 
             ActivityCompat.requestPermissions( this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 235)
         }else {
-            //guardar
+            guardar()
         }
     }
 
@@ -73,7 +40,7 @@ class AgregarNotaActivity : AppCompatActivity() {
             235 -> {
                 //pregunta si el usuario acepto los permisos
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    //guardar()
+                    guardar()
                 } else {
                     //si no acepto, coloca un mensaje
                     Toast.makeText(this, "Error: permisos denegado", Toast.LENGTH_SHORT)
@@ -101,6 +68,7 @@ class AgregarNotaActivity : AppCompatActivity() {
         finish()
     }
 
+
     private fun ubicacion(): String{
         val carpeta= File(Environment.getExternalStorageDirectory() , "notas")
         if (!carpeta.exists()){
@@ -108,4 +76,5 @@ class AgregarNotaActivity : AppCompatActivity() {
         }
         return carpeta.absolutePath
     }
+
 }
